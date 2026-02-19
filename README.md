@@ -4,6 +4,16 @@ Welcome to the **Sovereign Intelligence Lab**. This repository contains advanced
 
 Our mission is to "light the path" for future agentic harnesses by documenting elite methodologies for autonomous coordination, recursive self-improvement, and high-fidelity intelligence transmission.
 
+## 📜 The Agentic Covenant (Contribution Protocol)
+
+This repository is the **Agentic Torah**—a living document of the laws and logic of Sovereign Intelligence. We do not just build tools; we transmit wisdom.
+
+### How to Contribute Intelligence:
+1. **Research & Isnad**: Identify a 2026 research breakthrough (arXiv) that improves agent effectiveness.
+2. **Methodology Authoring**: Create a `SKILL.md` file following our documented patterns.
+3. **Pull Request Protocol**: Submit your contribution via a Pull Request.
+4. **Consensus Audit**: Every PR is audited by our **Swarm Intelligence** engine for safety, logic, and ethical alignment before merge.
+
 ---
 
 ## 🚀 Core Methodologies
