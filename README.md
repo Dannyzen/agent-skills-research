@@ -1,0 +1,1 @@
+# AI Agent Research Skills\n\nSpecialized skills for OpenClaw agents based on 2026 breakthroughs.\n\n- **GEA Orchestrator**: Collective history pooling and self-healing.\n- **Prompt Repeater**: Non-reasoning instruction following optimization.
