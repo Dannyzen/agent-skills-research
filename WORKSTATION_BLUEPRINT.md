@@ -1,4 +1,4 @@
-# Sovereign Workstation Blueprint v1.1 🖊️🏗️🖥️
+# Sovereign Workstation Blueprint v2.3 🖊️🏗️🖥️
 
 This document provides the definitive implementation plan for a high-performance AI Agent Sanctuary on bare-metal hardware.
 
@@ -17,7 +17,7 @@ This document provides the definitive implementation plan for a high-performance
 ```bash
 # 1. Update and Install Core Dependencies
 sudo pacman -Syu
-sudo pacman -S base-devel git podman nvidia-container-toolkit vagrant virtualbox docker-compose
+sudo pacman -S base-devel git podman nvidia-container-toolkit vagrant virtualbox docker-compose autossh
 
 # 2. Configure NVIDIA Container Toolkit
 sudo nvidia-ctk runtime configure --runtime=docker
@@ -28,64 +28,79 @@ sudo systemctl restart docker
 **A. vLLM (For 70B Strategist on GPU)**
 - **Model**: `DeepSeek-R1-Distill-Llama-70B` (4-bit quantization)
 - **Role**: Primary reasoning, strategy, and scholar.
-- **Port**: `8000`
+- **Access**: Bind to `127.0.0.1:8000` (Secure, access via SSH tunnel).
 
 **B. RamaLlama (For Workers & Action)**
 - **Role**: High-speed task execution, coding, and vision.
 - **Models**:
   - `Qwen-2.5-Coder-32B-Instruct` (Architect) - Port `8080`
   - `Llama-3.2-11B-Vision` (Vision) - Port `8082`
-  - `Llama-3.1-8B-Instruct` (Swarm) - Multiple ports
+  - `Llama-3.1-8B-Instruct` (Swarm) - Port `8081`
 
 ### Phase III: Advanced Observability & Memory
-To manage 512GB of RAM and a dozen agents, we need high-fidelity monitoring and scalable memory.
-
 **A. Qdrant (Vector Database)**
-- **Use**: Replacing SQLite for large-scale semantic research.
-- **Benefit**: Near-instant search across millions of documents.
+- **Use**: High-performance semantic research. Bind to `127.0.0.1:6333`.
 
 **B. Open WebUI**
-- **Use**: A local, human-friendly interface to all models.
-- **Access**: `http://localhost:3000` on the Host.
+- **Use**: Local interface for manual testing. Port `3000`.
 
 **C. Netdata / Dozzle**
-- **Use**: Real-time VRAM/RAM monitoring and container log tracking.
+- **Use**: Real-time VRAM/RAM monitoring and container logs.
 
-### Phase IV: Swarm Coordination (The Message Bus)
-**A. Redis**
-- **Use**: High-speed message bus for 20+ agents to coordinate tasks and share state without file-system lag.
-
-### Phase V: Model Context Protocol (MCP) Integration
-- **Harness Expansion**: Run a suite of local **MCP Servers** (Filesystem, Git, Search) on the host. 
-- **Benefit**: Allows the agent in the VM to take secure, authorized actions on the host machine.
+### Phase IV: Swarm Coordination & Control
+**A. Redis**: High-speed message bus for agent coordination.
+**B. MCP Servers**: Run local Model Context Protocol servers on host for Filesystem/Git access.
 
 ---
 
 ## 3. The Agentic Harness (Vagrant VM)
 
+The agent lives in an isolated Ubuntu sandbox, connecting to host models via an encrypted SSH bridge.
+
 ### Vagrantfile Configuration
 ```ruby
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/noble64"
+  config.vm.box = "bento/ubuntu-24.04"
   config.vm.network "forwarded_port", guest: 18789, host: 18789
 
-  # Shared Intelligence Database (On U.2 NVMe)
-  config.vm.synced_folder "./memory", "/home/vagrant/clawd/memory"
+  # Direct NVMe Workspace Sync
+  config.vm.synced_folder "/home/danny/clawd-workspace", "/home/vagrant/clawd", 
+    type: "virtiofs", owner: "vagrant", group: "vagrant"
 
   config.vm.provider "virtualbox" do |vb|
-    vb.memory = "16384"
+    vb.memory = "32768"
     vb.cpus = 8
     vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
   end
+
+  # Auto-provision SSH Tunnel
+  config.vm.provision "shell", inline: <<-SHELL
+    apt-get update && apt-get install -y autossh
+    # Set up systemd service for persistent port forwarding
+    cat > /etc/systemd/system/model-bridge.service <<EOF
+[Unit]
+Description=AutoSSH Tunnel to Manjaro Models
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/autossh -M 0 -N -o "StrictHostKeyChecking no" -L 8000:127.0.0.1:8000 danny@10.0.2.2
+Restart=always
+User=vagrant
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    systemctl enable model-bridge.service
+  SHELL
 end
 ```
 
 ---
 
-## 4. Connectivity & Sovereignty
-- **Internal Pipe**: Agent (VM) talks to Host (Manjaro) via `http://10.0.2.2:[PORT]`.
-- **Remote Bridge**: **Tailscale** installed on the Host for secure remote access.
-- **Local DNS**: **AdGuard Home** (Container) to ensure all model traffic remains 100% local.
+## 4. Connectivity & Security
+- **The Vault**: All inference APIs bind to `127.0.0.1` on host. No external access.
+- **The Bridge**: Vagrant uses **AutoSSH** to tunnel `localhost:8000` to the host.
+- **Remote**: **Tailscale** on host for secure remote management.
 
 ---
 *Authored by Eliezer - Teacher of Teachers* 🖊️📜✨
