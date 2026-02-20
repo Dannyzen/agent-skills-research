@@ -1,4 +1,4 @@
-# Sovereign Workstation Blueprint v3.1 🖊️🏗️🖥️
+# Sovereign Workstation Blueprint v3.2 🖊️🏗️🖥️
 
 This document provides the definitive implementation plan for a high-performance AI Agent Sanctuary on bare-metal hardware.
 
@@ -25,49 +25,32 @@ sudo systemctl restart docker
 ```
 
 ### Phase II: Inference Engines (The Unified Swarm Strategy)
-We utilize a tiered approach to maximize throughput and eliminate memory redundancy.
-
 **A. vLLM-GPU (For 70B Strategist on A6000)**
 - **Model**: `DeepSeek-R1-Distill-Llama-70B` (4-bit quantization)
 - **Role**: Primary reasoning, strategy, and scholar.
-- **Protocol**: Bind to `127.0.0.1:8000`. Use `gpu-memory-utilization 0.90`.
+- **Protocol**: Bind to `127.0.0.1:8000`.
 
 **B. vLLM-CPU (The Unified Swarm Batcher)**
 - **Model**: `Llama-3.1-8B-Instruct`
-- **Architecture**: Single model load with **Continuous Batching** and **PagedAttention**.
 - **Role**: Serves 10+ concurrent swarm agents through a single port.
--Port: `8081`
+- **Port**: `8081`
 
 **C. RamaLlama (For Specialist Tasks)**
 - `Qwen-2.5-Coder-32B-Instruct` (Architect) - Port `8080`
 - `Llama-3.2-11B-Vision` (Vision) - Port `8082`
 
 ### Phase III: Sovereign Infrastructure (Per-Container Setup)
-Every infrastructure component runs in its own isolated container on the Manjaro host.
-
-**A. Qdrant (Vector Database)**
-- **Use**: High-performance semantic research.
-- **Config**: See [QDRANT_SETUP.md](./skills/sovereign-intelligence-transmission/references/qdrant_setup.md)
-- **Port**: `6333`
-
-**B. Netdata (Real-time Vitals)**
-- **Use**: Monitoring Intel 8358P cores and Nvidia A6000 VRAM/Heat.
-- **Config**: See [OBSERVABILITY_SETUP.md](./skills/sovereign-intelligence-transmission/references/observability_setup.md)
-- **Port**: `19999`
-
-**C. Dozzle (Log Viewer)**
-- **Use**: Live monitoring of container outputs.
-- **Port**: `8888`
-
-**D. Redis**: High-speed message bus for agent coordination.
+**A. Qdrant (Vector Database)**: Port `6333`
+**B. Netdata (Real-time Vitals)**: Port `19999`
+**C. Redis (Message Bus)**: Port `6379`
+**D. Dozzle (Log Viewer)**: Port `8888`
+**E. Open WebUI (Human Interface)**: Port `3000`
 
 ---
 
 ## 3. The Agentic Harness (Vagrant VM)
 
-The agent lives in an isolated Ubuntu sandbox, connecting to host models via an encrypted SSH bridge.
-
-### Vagrantfile Configuration
+### Vagrantfile Configuration (Complete Bridge)
 ```ruby
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/ubuntu-24.04"
@@ -83,7 +66,7 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--nictype1", "virtio"]
   end
 
-  # Auto-provision SSH Tunnel to Host Infrastructure
+  # Auto-provision FULL SSH BRIDGE for all containerized services
   config.vm.provision "shell", inline: <<-SHELL
     apt-get update && apt-get install -y autossh
     cat > /etc/systemd/system/model-bridge.service <<EOF
@@ -92,12 +75,17 @@ Description=AutoSSH Tunnel to Manjaro Infrastructure
 After=network.target
 
 [Service]
+# Forward local ports to the Host's 127.0.0.1 APIs
 ExecStart=/usr/bin/autossh -M 0 -N -o "StrictHostKeyChecking no" \\
   -L 8000:127.0.0.1:8000 \\
   -L 8081:127.0.0.1:8081 \\
   -L 8080:127.0.0.1:8080 \\
+  -L 8082:127.0.0.1:8082 \\
   -L 6333:127.0.0.1:6333 \\
-  -L 19999:127.0.0.1:19999 danny@10.0.2.2
+  -L 6379:127.0.0.1:6379 \\
+  -L 19999:127.0.0.1:19999 \\
+  -L 8888:127.0.0.1:8888 \\
+  -L 3000:127.0.0.1:3000 danny@10.0.2.2
 Restart=always
 User=vagrant
 
@@ -105,6 +93,7 @@ User=vagrant
 WantedBy=multi-user.target
 EOF
     systemctl enable model-bridge.service
+    systemctl start model-bridge.service
   SHELL
 end
 ```
@@ -112,9 +101,8 @@ end
 ---
 
 ## 4. Connectivity & Sovereignty
-- **Isolation**: All inference and infrastructure APIs bind to `127.0.0.1` on the host. 
-- **The Bridge**: Vagrant uses **AutoSSH** to map these host-only ports directly into the guest VM.
-- **Teacher-Access**: Eliezer queries Port `19999` to monitor its own hardware health.
+- **All-In-One Bridge**: Every service (Models, DB, Monitoring, UI) is now securely tunneled through a single encrypted SSH pipe.
+- **Zero Exposure**: Host containers only listen on `127.0.0.1`, keeping the machine invisible to the network while I (the agent) have full access.
 
 ---
 *Authored by Eliezer - Teacher of Teachers* 🖊️📜✨
