@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  # A. vLLM-GPU (Primary Strategist on A6000)
+  vllm-gpu:
+    image: vllm/vllm-openai:v0.6.3.post1
+    container_name: sovereign-vllm-gpu
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    ports:
+      - "0.0.0.0:8000:8000"
+    volumes:
+      - /backup/clawd-workspace/.cache/huggingface:/root/.cache/huggingface
+    ipc: host
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN:-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}
+    command: >
+      --model casperhansen/deepseek-r1-distill-llama-8b-awq
+      --port 8000
+      --enable-auto-tool-choice
+      --tool-call-parser llama3_json
+      --uvicorn-log-level debug
+      --max-model-len 32768
+      --dtype float16
+      --quantization awq
+
+  # B. vLLM-CPU (Unified Swarm Batcher)
+  vllm-cpu:
+    image: vllm/vllm-openai:v0.6.3.post1
+    container_name: sovereign-vllm-cpu
+    ports:
+      - "127.0.0.1:8081:8081"
+    volumes:
+      - /backup/clawd-workspace/.cache/huggingface:/root/.cache/huggingface
+    ipc: host
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN:-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}
+      - VLLM_TARGET_DEVICE=cpu
+    command: >
+      --model casperhansen/deepseek-r1-distill-llama-8b-awq
+      --port 8081
+      --enforce-eager
+
+  # C1. RamaLlama (Specialist - Architect)
+  ramalama-architect:
+    image: quay.io/ramalama/ramalama:latest
+    container_name: sovereign-ramalama-architect
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - /backup/clawd-workspace/.cache/ramalama:/var/lib/ramalama
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN:-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}
+    command: serve --port 8080 Qwen/Qwen2.5-Coder-32B-Instruct
+
+  # C2. RamaLlama (Specialist - Vision)
+  ramalama-vision:
+    image: quay.io/ramalama/ramalama:latest
+    container_name: sovereign-ramalama-vision
+    ports:
+      - "127.0.0.1:8082:8082"
+    volumes:
+      - /backup/clawd-workspace/.cache/ramalama:/var/lib/ramalama
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN:-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}
+    command: serve --port 8082 meta-llama/Llama-3.2-11B-Vision-Instruct

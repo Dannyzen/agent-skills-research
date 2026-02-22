@@ -1,0 +1,11 @@
+{
+  "name": "skill-memory",
+  "version": "1.0.0",
+  "description": "CLI interface for Qdrant memory management.",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "commander": "^11.1.0",
+    "uuid": "^9.0.1"
+  }
+}
