@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  # Single LLM backend (Ollama) for CPU efficiency
+  llm:
+    image: ollama/ollama:latest
+    container_name: sovereign-llm
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+  # Utility to pull the models on startup
+  model-puller:
+    image: curlimages/curl
+    depends_on:
+      - llm
+    command: >
+      sh -c "
+      echo 'Waiting for Ollama...';
+      until curl -s http://llm:11434/api/tags > /dev/null; do sleep 2; done;
+      echo 'Pulling llama3...';
+      curl -X POST http://llm:11434/api/pull -d '{\"name\": \"llama3\"}';
+      echo 'Pulling nomic-embed-text...';
+      curl -X POST http://llm:11434/api/pull -d '{\"name\": \"nomic-embed-text\"}';
+      echo 'Models pulled!';
+      "
+
+  orchestrator:
+    build: 
+      context: ./orchestrator
+      dockerfile: Dockerfile.orchestrator
+    container_name: sovereign-orchestrator
+    depends_on:
+      - llm
+      - model-puller
+    environment:
+      - ROUTER_URL=http://llm:11434/v1
+      - WORKER_URL=http://llm:11434/v1
+      - QDRANT_URL=http://host.docker.internal:6333
+      - MODEL_NAME=llama3
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./orchestrator:/app
+    command: python main.py
+
+volumes:
+  ollama_data:

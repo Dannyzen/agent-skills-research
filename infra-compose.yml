@@ -1,32 +1,6 @@
 version: "3.8"
 
 services:
-  # Dozzle - Real-time container log viewer
-  dozzle:
-    image: amir20/dozzle:latest
-    container_name: sovereign-dozzle
-    ports:
-      - "127.0.0.1:8888:8080"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: always
-
-  # Netdata - Real-time hardware monitoring (VRAM, CPU, Temps)
-  netdata:
-    image: netdata/netdata:latest
-    container_name: sovereign-netdata
-    ports:
-      - "127.0.0.1:19999:19999"
-    cap_add:
-      - SYS_PTRACE
-    security_opt:
-      - apparmor:unconfined
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    restart: always
-
   # Qdrant - High-performance Vector Database for Agent Memory
   qdrant:
     image: qdrant/qdrant:latest
@@ -35,27 +9,5 @@ services:
       - "127.0.0.1:6333:6333"
       - "127.0.0.1:6334:6334"
     volumes:
-      - /backup/clawd-workspace/qdrant_storage:/qdrant/storage
-    restart: always
-
-  # Redis - High-speed message bus for agent coordination
-  redis:
-    image: redis:alpine
-    container_name: sovereign-redis
-    ports:
-      - "127.0.0.1:6379:6379"
-    restart: always
-
-  # Open WebUI - Primary human-agent interface
-  open-webui:
-    image: ghcr.io/open-webui/open-webui:main
-    container_name: sovereign-open-webui
-    ports:
-      - "127.0.0.1:3000:8080"
-    environment:
-      - OLLAMA_BASE_URL=http://127.0.0.1:8081 # Fallback to CPU vLLM if needed
-      - OPENAI_API_BASE_URL=http://127.0.0.1:8000/v1 # Connect to Primary vLLM GPU
-      - WEBUI_AUTH=False
-    volumes:
-      - /backup/clawd-workspace/open-webui:/app/backend/data
+      - /var/lib/qdrant_storage:/qdrant/storage
     restart: always
