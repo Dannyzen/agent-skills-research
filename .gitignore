@@ -40,3 +40,4 @@ clawd/
 build/
 out/
 target/
+models/*.gguf
