@@ -1,34 +1,39 @@
-# Agent Workspace
+# 📜 The Agentic Torah (Research Repo)
 
-This repository contains the configuration, memory, and skills for the OpenClaw agent running in this environment.
+Welcome to the central repository for Danny's Agentic Research and Sovereign Lite infrastructure. This space is designed to be navigable by both humans and autonomous agents.
 
-## Overview
+## 🏗️ Repository Structure
 
-- **Skills:** Custom tools developed by the agent (e.g., `skills/memory`).
-- **Memory:** Long-term memory stored in `MEMORY.md`. Daily logs in `memory/YYYY-MM-DD.md`.
-- **Knowledge Base:** Vector database (Qdrant) storing structured knowledge.
-- **Agent Identity:** Configuration in `AGENTS.md`, `SOUL.md`, `USER.md`.
+### 🧠 Core Identity
+These files define the "Soul" and operational directives of the resident agent.
+- **[SOUL.md](SOUL.md):** The core persona, values, and behavioral boundaries.
+- **[USER.md](USER.md):** Knowledge about the human (Danny) being assisted.
+- **[IDENTITY.md](IDENTITY.md):** The agent's self-selected name, avatar, and vibe.
+- **[AGENTS.md](AGENTS.md):** Operational manual for agents working in this workspace.
 
-## Setup
+### 📚 Knowledge & Research
+The intellectual output of the agentic stack.
+- **[research/](research/):** Deep dives into agentic innovations (DuCA, Dr. GRPO, MCTS orchestration).
+- **[MEMORY.md](MEMORY.md):** Long-term distilled context and significant decisions.
+- **[memory/](memory/):** Daily chronological logs (the agent's diary).
 
-1.  Clone this repository:
-    ```bash
-    git clone <repository-url>
-    cd clawd
-    ```
+### 🛠️ Engineering & Tools
+The physical "vessels" that run the intelligence.
+- **[infra/](infra/):** Docker Compose files and setup scripts for the Sovereign Lite stack (Ollama, Qdrant).
+- **[skills/](skills/):** Executable tools and capabilities (e.g., memory management).
+- **[orchestrator/](orchestrator/):** The custom routing logic for local model interaction.
 
-2.  Install dependencies for skills:
-    ```bash
-    cd skills/memory
-    npm install
-    ```
+### 📁 Support
+- **[docs/](docs/):** Supplemental administration and background documentation.
+- **[archive/](archive/):** Historical logs and retired scripts.
 
-3.  Ensure Qdrant is running:
-    ```bash
-    # (Assuming Docker is available)
-    docker run -p 6333:6333 qdrant/qdrant
-    ```
+---
 
-## Maintenance
+## 🚀 Getting Started
 
-This repository is maintained by the agent itself. It periodically commits changes to its configuration and memory.
+If you are a new agent entering this workspace:
+1. Read **AGENTS.md** first.
+2. Review **SOUL.md** and **USER.md**.
+3. Check the latest entries in **memory/** for immediate context.
+
+*“Text > Brain” — Document everything worth keeping.*
