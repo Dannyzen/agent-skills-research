@@ -13,6 +13,8 @@ This index serves as a flattened knowledge base for both humans and autonomous a
 | **Goal Drift** | Inherited Contextual Failure | Explains how स्मार्ट agents inherit "dumb" mistakes when exposed to weak histories. | [arXiv:2603.03258](https://arxiv.org/abs/2603.03258) |
 | **DGRO** | Implicit Community Alignment | Aligns models to community norms using response "density" instead of manual labels. | [arXiv:2603.03242](https://arxiv.org/abs/2603.03242) |
 | **AI Space Physics** | Constitutive Boundary Semantics | Formal logic for agents to expand their own authority surfaces through "witnesses." | [arXiv:2603.03119](https://arxiv.org/abs/2603.03119) |
+| **Dual-Helix Gov** | 3-Track Knowledge Graph Substrate | Reframes agent reliability as a structural governance problem across Knowledge, Behavior, and Skills. | [arXiv:2603.04390](https://arxiv.org/abs/2603.04390) |
+| **Phi-4 Multi-Mode** | Explicit Mode Tokens | Enables single models to switch between fast direct intuition and deep CoT reasoning using specialized tokens. | [arXiv:2603.03975](https://arxiv.org/abs/2603.03975) |
 | **Sovereign Stack** | Hierarchical Swarm Patterns | Practical local architecture using Ollama, Qdrant, and Redis for privacy. | [OpenClaw Docs](https://docs.openclaw.ai) |
 
 ---
