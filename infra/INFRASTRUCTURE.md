@@ -1,30 +1,27 @@
-# Infrastructure Architecture
+# Sovereign Lite: Infrastructure Architecture
 
 ## Environment
-- **Host:** Virtual Machine (`Vagrant` / `bento/ubuntu-24.04`)
-- **Network:** `10.0.2.15` (Guest) ↔ `10.0.2.2` (Host Gateway)
+- **Host Platform:** Virtual Machine (`Vagrant` / `bento/ubuntu-24.04`)
+- **Container Engine:** Docker Engine 24.x
+- **Network Strategy:** Local Loopback (`127.0.0.1`) for high-security, low-latency agentic communication.
 
-## Service Connectivity
-The agent runs inside a VM and accesses external services hosted on the physical machine (Manjaro) via the gateway IP `10.0.2.2`.
+## Core Services (Sovereign Lite Stack)
+All services are containerized within the VM to ensure complete data sovereignty and independence from host machine networking.
 
-| Service | Port | Host Address | Status | Note |
+| Service | Container Name | Port | Status | Role |
 | :--- | :--- | :--- | :--- | :--- |
-| **Qdrant** | 6333 | `http://10.0.2.2:6333` | ✅ Active | Knowledge Base |
-| **vLLM (GPU)** | 8000 | `http://10.0.2.2:8000` | ❌ Offline | DeepSeek/Llama-70B |
-| **vLLM (CPU)** | 8081 | `http://10.0.2.2:8081` | ❌ Offline | Llama-3-8B |
-| **RamaLlama** | 8080 | `http://10.0.2.2:8080` | ❌ Offline | Qwen-Coder |
-| **Redis** | 6379 | `10.0.2.2:6379` | ❌ Offline | Message Bus |
+| **Ollama** | `sovereign-llm` | 11434 | ✅ Active | Local LLM Inference Engine |
+| **Qdrant** | `sovereign-qdrant` | 6333 | ✅ Active | Long-term Semantic Vector Memory |
+| **Orchestrator** | `sovereign-orchestrator` | N/A | ✅ Active | Custom tool routing & model coordination |
 
-## Bridge Configuration
-The `model-bridge.service` (AutoSSH) is currently **FAILED**.
-- **Reason:** SSH connection refused to `danny@10.0.2.2`.
-- **Workaround:** Using direct HTTP requests to `10.0.2.2` for exposed services (like Qdrant).
-- **Goal:** Fix SSH keys or ensure host services bind to `0.0.0.0` (not just `127.0.0.1`) so the VM can reach them without the tunnel.
+## LLM Strategy
+We prioritize local-first inference to minimize cloud VRAM dependency and maximize privacy.
+1. **Model:** `llama3:latest` (8B) for general strategy and tool use.
+2. **Embedding:** `nomic-embed-text:latest` for vectorizing research and memory.
 
-## Sovereignty Strategy
-To reduce reliance on cloud APIs (Gemini), we must restore connectivity to the local LLMs on the host.
-1.  **FunctionGemma (Router)** → Host Port 8081 (CPU/Low VRAM)
-2.  **Llama-3-8B (Worker)** → Host Port 8081/8082
-3.  **Qdrant (Memory)** → Host Port 6333 (Working)
+## Deployment & Ops
+- **Startup:** Managed via `infra/start_sovereign_lite.sh`.
+- **Composition:** Split between `infra-compose.yml` (base storage) and `sovereign-lite-compose.yml` (inference services).
+- **Maintenance:** Local git repository (shrunk to <200KB) is synced via GitHub PAT to `Dannyzen/agent-skills-research`.
 
-*Documented for future context.*
+*“Text > Brain” — Documenting the foundation of the Agentic Torah.*
