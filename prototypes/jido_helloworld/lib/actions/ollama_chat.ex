@@ -9,20 +9,24 @@ defmodule JidoHelloworld.Actions.OllamaChat do
   def run(params, _context) do
     ollama_url = System.get_env("OLLAMA_URL") || "http://sovereign-llm:11434"
     model = System.get_env("MODEL_NAME") || "llama3"
+    full_url = "#{ollama_url}/api/generate"
 
-    IO.puts("📡 Jido calling Ollama at #{ollama_url} with model #{model}...")
+    IO.puts("📡 Action started. Jido calling Ollama at #{full_url}...")
 
-    case Req.post("#{ollama_url}/api/generate", json: %{
-      model: model,
-      prompt: params.prompt,
-      stream: false
-    }) do
+    case Req.post(full_url, 
+      json: %{
+        model: model,
+        prompt: params.prompt,
+        stream: false
+      },
+      receive_timeout: 300_000
+    ) do
       {:ok, %{status: 200, body: body}} ->
-        response = body["response"]
-        {:ok, %{last_response: response}}
+        IO.puts("✅ Ollama responded successfully.")
+        {:ok, %{last_response: body["response"]}}
 
-      {:ok, %{status: status}} ->
-        {:error, "Ollama returned status #{status}"}
+      {:ok, %{status: status, body: body}} ->
+        {:error, "Ollama returned status #{status}: #{inspect(body)}"}
 
       {:error, reason} ->
         {:error, "Ollama connection failed: #{inspect(reason)}"}

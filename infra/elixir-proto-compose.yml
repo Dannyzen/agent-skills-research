@@ -1,0 +1,18 @@
+services:
+  jido-proto:
+    build: 
+      context: ../prototypes/jido_helloworld
+      dockerfile: Dockerfile
+    container_name: jido-hello-world
+    networks:
+      - infra_default
+    environment:
+      - OLLAMA_URL=http://sovereign-llm:11434
+      - MODEL_NAME=llama3
+    volumes:
+      - ../prototypes/jido_helloworld:/app
+    command: sh -c "mix deps.get && mix run run_helloworld.exs"
+
+networks:
+  infra_default:
+    external: true
