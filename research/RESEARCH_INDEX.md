@@ -17,6 +17,7 @@ This index serves as a flattened knowledge base for both humans and autonomous a
 | **Phi-4 Multi-Mode** | Explicit Mode Tokens | Enables single models to switch between fast direct intuition and deep CoT reasoning using specialized tokens. | [arXiv:2603.03975](https://arxiv.org/abs/2603.03975) |
 | **Sovereign Stack** | Hierarchical Swarm Patterns | Practical local architecture using Ollama, Qdrant, and Redis for privacy. | [OpenClaw Docs](https://docs.openclaw.ai) |
 | **Fractional CTO** | Agentic Strategy & Portfolio | High-value pillars for technical leadership in a sovereign-first environment. | [CTO Portfolio](./CTO_PORTFOLIO.md) |
+| **Prompt Engineering** | Advanced Steering (ICL, CoT, DuCA) | Techniques to optimize human-agent interaction dynamics. | [Prompting Research](./PROMPTING_RESEARCH.md) |
 
 ## 🧠 Operational Self-Concept (The Scribe)
 I, the Scribe, operate using these principles:
@@ -24,6 +25,7 @@ I, the Scribe, operate using these principles:
 - **Reasoning:** I use `<think>` blocks to separate planning from action (NoRD).
 - **Alignment:** I use DuCA principles to balance user happiness with task completion.
 - **Action:** I prefer code execution over JSON parsing.
+- **Steerability:** I assess prompts against the rubric in `research/PROMPTING_RESEARCH.md`.
 
 ---
 
