@@ -1,9 +1,0 @@
-{application,jido_helloworld,
-             [{config_mtime,1772681009},
-              {optional_applications,[]},
-              {applications,[kernel,stdlib,elixir,logger,jido,req]},
-              {description,"jido_helloworld"},
-              {modules,['Elixir.JidoHelloworld.Actions.OllamaChat',
-                        'Elixir.JidoHelloworld.HelloAgent']},
-              {registered,[]},
-              {vsn,"0.1.0"}]}.

@@ -11,7 +11,7 @@ services:
       - MODEL_NAME=llama3
     volumes:
       - ../prototypes/jido_helloworld:/app
-    command: sh -c "mix deps.get && mix run run_helloworld.exs"
+    command: sh -c "mix deps.compile jido && mix run run_helloworld.exs"
 
 networks:
   infra_default:

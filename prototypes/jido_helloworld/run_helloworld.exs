@@ -2,12 +2,12 @@
 alias JidoHelloworld.HelloAgent
 alias JidoHelloworld.Actions.OllamaChat
 
-IO.puts("🤖 Starting Jido Hello World Prototype...")
+IO.puts("🤖 Starting Jido Hello World Prototype (Supervised Edition)...")
 
+# 1. Warm up Ollama
 ollama_url = System.get_env("OLLAMA_URL") || "http://sovereign-llm:11434"
 model = System.get_env("MODEL_NAME") || "llama3"
 
-# 1. Warm up Ollama with a simple prompt
 IO.puts("🔥 Warming up Ollama (Model: #{model})...")
 try do
   case Req.post("#{ollama_url}/api/generate", 
@@ -15,32 +15,38 @@ try do
     receive_timeout: 120_000
   ) do
     {:ok, %{status: 200}} -> IO.puts("✅ Ollama is warm and ready.")
-    {:ok, %{status: status, body: body}} -> IO.puts("⚠️ Ollama returned #{status}: #{inspect(body)}")
-    {:error, reason} -> IO.puts("❌ Ollama connection failed: #{inspect(reason)}")
+    _ -> IO.puts("⚠️ Warmup check failed, continuing anyway...")
   end
 rescue
-  e -> IO.puts("❌ Error during warmup: #{inspect(e)}")
+  _ -> IO.puts("❌ Warmup connection failed, continuing anyway...")
 end
 
-# 2. Call the Action directly to bypass Jido's default 5s Workflow timeout
-# This still uses the Jido Action module structure.
-params = %{prompt: "Say 'Hello from the BEAM!' in a very robot-like way."}
+# The server name we configured in Application.ex
+server_name = "hello_agent_v1"
+registry = Jido.AgentRegistry
+server_via = {:via, Registry, {registry, server_name}}
 
-IO.puts("\n🧠 Calling Jido Action directly (Bypassing 5s Workflow timeout)...")
-case OllamaChat.run(params, %{}) do
-  {:ok, %{last_response: response}} ->
+params = %{prompt: "Say 'Hello from the supervised AgentServer!' in a very robot-like way."}
+
+IO.puts("\n🧠 Calling Jido AgentServer via GenServer.call (Formal Workflow)...")
+IO.puts("⏳ This uses our patched 300s timeout.")
+
+case Jido.Agent.Server.cmd(server_via, {OllamaChat, params}) do
+  {:ok, server_state} ->
     IO.puts("\n✅ Success!")
-    IO.puts("Agent Response: #{response}")
     
-    # Update an agent struct manually to show we have the state
-    agent = HelloAgent.new()
-    agent = %{agent | state: %{last_response: response}}
+    agent = server_state.agent
+    last_response = agent.state[:last_response]
+    
+    if last_response do
+      IO.puts("\n🤖 Robot says: #{last_response}")
+    else
+      IO.puts("\n⚠️ No response found in agent state.")
+      IO.inspect(agent.state, label: "Agent State")
+    end
+
     IO.puts("\nFinal Agent State: #{inspect(agent.state)}")
 
   {:error, reason} ->
-    IO.puts("\n❌ Action Error: #{inspect(reason)}")
-
-  other ->
-    IO.puts("\n❓ Unexpected return format:")
-    IO.inspect(other)
+    IO.puts("\n❌ Server Error: #{inspect(reason)}")
 end

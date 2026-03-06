@@ -40,6 +40,8 @@ clawd/
 build/
 out/
 target/
+**/_build/
+**/deps/
 models/*.gguf
 USER.md
 hardware_research/
