@@ -1,4 +1,4 @@
-# 📚 Research Index: The Agentic Torah
+# 📚 Research Index: The Agentic Sefer
 
 This index serves as a flattened knowledge base for both humans and autonomous agents. It summarizes the core methodologies and innovations discovered in 2024–2026. Use the external links to "deep learn" specific implementations.
 
