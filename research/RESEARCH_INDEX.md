@@ -16,6 +16,7 @@ This index serves as a flattened knowledge base for both humans and autonomous a
 | **Dual-Helix Gov** | 3-Track Knowledge Graph Substrate | Reframes agent reliability as a structural governance problem across Knowledge, Behavior, and Skills. | [arXiv:2603.04390](https://arxiv.org/abs/2603.04390) |
 | **Phi-4 Multi-Mode** | Explicit Mode Tokens | Enables single models to switch between fast direct intuition and deep CoT reasoning using specialized tokens. | [arXiv:2603.03975](https://arxiv.org/abs/2603.03975) |
 | **Sovereign Stack** | Hierarchical Swarm Patterns | Practical local architecture using Ollama, Qdrant, and Redis for privacy. | [OpenClaw Docs](https://docs.openclaw.ai) |
+| **Fractional CTO** | Agentic Strategy & Portfolio | High-value pillars for technical leadership in a sovereign-first environment. | [CTO Portfolio](./CTO_PORTFOLIO.md) |
 
 ---
 

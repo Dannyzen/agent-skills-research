@@ -11,7 +11,8 @@ defmodule JidoHelloworld.Actions.OllamaChat do
     model = System.get_env("MODEL_NAME") || "llama3"
     full_url = "#{ollama_url}/api/generate"
 
-    IO.puts("📡 Action started. Jido calling Ollama at #{full_url}...")
+    require Logger
+    Logger.info("📡 Action started. Jido calling Ollama at #{full_url}...")
 
     case Req.post(full_url, 
       json: %{
@@ -22,7 +23,7 @@ defmodule JidoHelloworld.Actions.OllamaChat do
       receive_timeout: 300_000
     ) do
       {:ok, %{status: 200, body: body}} ->
-        IO.puts("✅ Ollama responded successfully.")
+        Logger.info("✅ Ollama responded successfully.")
         {:ok, %{last_response: body["response"]}}
 
       {:ok, %{status: status, body: body}} ->
