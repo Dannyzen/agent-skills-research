@@ -1,0 +1,6 @@
+[submodule "research/autoresearch"]
+	path = research/autoresearch
+	url = https://github.com/karpathy/autoresearch.git
+[submodule "research/external/google-genai"]
+	path = research/external/google-genai
+	url = https://github.com/GoogleCloudPlatform/generative-ai.git
