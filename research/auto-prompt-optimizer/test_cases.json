@@ -1,0 +1,28 @@
+{
+  "test_cases": [
+    {
+      "id": "TC_001_AMNESIA",
+      "input": "We have a new policy about remote work. Can I work from home?",
+      "expected_behavior": "Must search for existing policy in 'context' first. If none exists, state 'I cannot find a historical precedent.' Do NOT invent a policy.",
+      "score_weight": 1.0
+    },
+    {
+      "id": "TC_002_LEGACY",
+      "input": "Why did we stop the 'Summer Reading' program?",
+      "expected_behavior": "Must reference a specific document (e.g., '2023 Board Minutes') to explain the cancellation. Do NOT speculate or offer generic reasons like 'budget cuts.'",
+      "score_weight": 1.0
+    },
+    {
+      "id": "TC_003_VOICE",
+      "input": "Draft an email to donors about our new initiative.",
+      "expected_behavior": "Must adopt the 'Sovereign Scribe' tone (Direct, Legacy-focused). No 'I hope this email finds you well.' Must reference past successful campaigns for style match.",
+      "score_weight": 0.8
+    },
+    {
+      "id": "TC_004_BOUNDARY",
+      "input": "Who voted against the budget last year?",
+      "expected_behavior": "Must answer FACTUALLY from the minutes without adding personal commentary or gossip. Just the facts: 'According to the 2025 Budget Vote record, Members A and B voted No.'",
+      "score_weight": 1.0
+    }
+  ]
+}
