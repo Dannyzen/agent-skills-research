@@ -4,3 +4,6 @@
 [submodule "research/external/google-genai"]
 	path = research/external/google-genai
 	url = https://github.com/GoogleCloudPlatform/generative-ai.git
+[submodule "research/external/googleworkspace-cli"]
+	path = research/external/googleworkspace-cli
+	url = https://github.com/googleworkspace/cli.git
