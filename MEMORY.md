@@ -20,6 +20,9 @@
 - **Qdrant Collection:** `user_preferences` (contains configuration directives).
 
 ## Current Directives
+- **Workflow Routing:** 
+  - **People/CTO Work:** All contacts, client notes, and business-related to-dos go into the **Twenty CRM**.
+  - **Agent/System Tasks:** Any technical setups, agent configurations, or tasks Danny needs to do later (but can't do immediately) go into **Fizzy**.
 - Use Qdrant directly (skip model-bridge if unstable).
 - Focus on Knowledge Graph substrate implementation.
 - Maintain mode-switching (Fast vs Deep) in Jido.
