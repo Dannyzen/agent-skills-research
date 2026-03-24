@@ -45,3 +45,5 @@ target/
 models/*.gguf
 USER.md
 hardware_research/
+
+/docs/ADMINISTRATION.md
