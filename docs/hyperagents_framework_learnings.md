@@ -114,3 +114,10 @@ Applying diffs as text has edge cases; robust behavior needs:
 - `prototypes/hyperagent_lab/run_meta_agent.py`
 - `tests/test_hyperagent_lab_paper_mode.py`
 - `output/hyperagent_paper_mode_v2/` (verification artifacts and checks)
+
+## 8) Core paper reference
+
+Primary source: **Hyperagents: LLMs can improve themselves by improving training data** (2026)
+- arXiv: https://arxiv.org/abs/2603.19461
+- PDF: https://arxiv.org/pdf/2603.19461.pdf
+
